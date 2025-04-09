@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String
+  password String
+
+  role Role @default(user)
+
+  gardens Garden[]
+}
+
+model Garden {
+  id         Int          @id @default(autoincrement())
+  name       String
+  ownerId    Int
+  owner      User         @relation(fields: [ownerId], references: [id])
+  vegetables Vegetable[]
+  sales      Sale[]
+  sensorData SensorData[]
+}
+
+model Vegetable {
+  id          Int    @id @default(autoincrement())
+  name        String
+  quantityIn  Int
+  quantityOut Int
+  price       Float
+  gardenId    Int
+  garden      Garden @relation(fields: [gardenId], references: [id])
+  sales       Sale[]
+}
+
+model Sale {
+  id          Int       @id @default(autoincrement())
+  quantity    Int
+  totalPrice  Float
+  soldAt      DateTime  @default(now())
+  gardenId    Int
+  garden      Garden    @relation(fields: [gardenId], references: [id])
+  vegetableId Int
+  vegetable   Vegetable @relation(fields: [vegetableId], references: [id])
+}
+
+model SensorData {
+  id          Int      @id @default(autoincrement())
+  temperature Float
+  humidity    Float
+  timestamp   DateTime @default(now())
+  gardenId    Int
+  garden      Garden   @relation(fields: [gardenId], references: [id])
+
+  @@index([timestamp]) // hỗ trợ truy vấn theo thời gian nhanh hơn
+}
