@@ -27,7 +27,7 @@ export class VegetableService{
         const vegetables = await this.prisma.vegetable.findMany({
             where:{
                 garden:{
-                    userId: userId
+                     userId
                 }
             }
         })

@@ -99,7 +99,7 @@ export class VegetableController{
     @Get(':id/price')
     @UseGuards(JwtAuthGuard,OwnershipGuard)
     @ApiBearerAuth()
-    @ApiOperation({summary:'xóa vegetable price '})
+    @ApiOperation({summary:'lấy vegetable price '})
     @ApiResponse({status:201, description:"thành công"})
     @ApiResponse({status:401, description: "chưa xác thực"})
     @ApiResponse({status: 403, description: "Không có quyền truy cập"})

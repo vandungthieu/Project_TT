@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateGardenDto } from "./dto/create-garden.dto";
 import { UpdateGardenDto } from "./dto/update-garden.dto";
@@ -8,10 +8,25 @@ export class GardenService{
     constructor (private readonly prisma : PrismaService){}
 
     // create garden
-    async createGarden(dto: CreateGardenDto){
+    async createGarden(dto: CreateGardenDto, userId: number){
+       // kiểm tra tên trùng lặp
+       const existingGarden = await this.prisma.garden.findFirst({
+        where:{name: dto.name,userId}
+       })
+       if (existingGarden) {
+        throw new BadRequestException('Garden name already exists for this user');
+      }
+
+      try {
         return await this.prisma.garden.create({
-            data: dto
-        })
+          data: {
+            name: dto.name,
+            userId // Liên kết với user
+          },
+        });
+      } catch (error) {
+        throw new BadRequestException('Failed to create garden');
+      }
     }
 
     // get all garden 
@@ -21,15 +36,19 @@ export class GardenService{
 
     //get garden by id
     async getGardenById(id: number){
-        return await this.prisma.garden.findUniqueAndThrow({
+        const garden = await this.prisma.garden.findUnique({
             where: {id}
         })
+        if(!garden){
+            throw new NotFoundException(`Not found garden: ${id}`)
+        }
+        return garden
     }
 
     //get garden by userId
     async getGardenByUserId(userId: number){
         const gardens = await this.prisma.garden.findMany({
-            where:{userId: userId}
+            where:{userId}
         })
         if(!gardens){
             throw new NotFoundException(`Not found userId:${userId}`)

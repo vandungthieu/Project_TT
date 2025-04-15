@@ -4,9 +4,11 @@ import { EnvCheckMiddleware } from './middleware/envCheck.middleware';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { GardenModule } from './garden/garden.module';
+import { UsersModule } from './user/user.module';
+import { VegetableModule } from './vegetable/vegetable.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, GardenModule],
+  imports: [PrismaModule, AuthModule, GardenModule,UsersModule, VegetableModule ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer){

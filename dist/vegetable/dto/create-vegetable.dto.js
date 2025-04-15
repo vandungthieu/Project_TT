@@ -1,0 +1,53 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateVegetabletDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
+class CreateVegetabletDto {
+    gardenId;
+    name;
+    quantityIn;
+    quantityOut;
+    price;
+}
+exports.CreateVegetabletDto = CreateVegetabletDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "id của garden", type: "integer", example: 1 }),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateVegetabletDto.prototype, "gardenId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'tên loại rau', type: 'string', example: "rau chân vịt" }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateVegetabletDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Số lượng nhập', type: "integer", example: 1000 }),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateVegetabletDto.prototype, "quantityIn", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Số lượng bán', type: "integer", example: 1000 }),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateVegetabletDto.prototype, "quantityOut", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'giá bán', type: 'string', example: 2.5 }),
+    (0, class_validator_1.IsNumber)({ allowNaN: false, allowInfinity: false }),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateVegetabletDto.prototype, "price", void 0);
+//# sourceMappingURL=create-vegetable.dto.js.map

@@ -16,7 +16,7 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
                 secret: configService.get<string>('JWT_SECRET'),
                 signOptions:{expiresIn: '1h'}
             }),
-            inject :[ConfigModule]
+            inject :[ConfigService]
         })
     ],
     providers:[AuthService,LocalStrategy,JwtStrategy],

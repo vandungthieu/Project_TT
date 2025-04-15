@@ -7,10 +7,9 @@ export class CreateGardenDto{
     @IsNotEmpty()
     name : string
 
-    @ApiProperty({description:'id chủ sở hữu', type:'integer', example: 123})
-    @IsInt()
-    @IsNotEmpty()
-    ownerId : number
-
+    // @ApiProperty({description:'id chủ sở hữu', type:'integer', example: 123})
+    // @IsInt()
+    // @IsNotEmpty()
+    // userId : number
 
 }

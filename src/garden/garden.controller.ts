@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GardenService } from "./garden.service";
 import { CreateGardenDto } from "./dto/create-garden.dto";
@@ -25,40 +25,42 @@ export class GardenController{
         return this.gardenService.getAllGarden()
     }
 
-    @Get('user:userId')
-    @UseGuards(JwtAuthGuard,OwnershipGuard)
-    @ApiBearerAuth()
-    @ApiOperation({summary:'lấy garden theo userId) '})
-    @ApiResponse({status:201, description:"lấy thành công garden", type: CreateGardenDto})
-    @ApiResponse({status:401, description: "chưa xác thực"})
-    @ApiResponse({status: 403, description: "Không có quyền truy cập"})
-    @ApiResponse({status: 404, description:"Không tìm thấy user"})
-    getGardenByUserId(@Param('userId', ParseIntPipe) userId : number){
-        return this.gardenService.getGardenByUserId(userId)
-    }
-
     @Get(':id')
     @UseGuards(JwtAuthGuard,OwnershipGuard)
     @ApiBearerAuth()
-    @ApiOperation({summary:'lấy garden theo id) '})
-    @ApiResponse({status:201, description:"lấy thành công garden", type: CreateGardenDto})
+    @ApiOperation({summary:'lấy garden theo Id) '})
+    @ApiResponse({status:200, description:"lấy thành công garden", type: CreateGardenDto})
     @ApiResponse({status:401, description: "chưa xác thực"})
     @ApiResponse({status: 403, description: "Không có quyền truy cập"})
-    @ApiResponse({status: 404, description:"Không tìm thấy garden"})
+    @ApiResponse({status: 404, description:"Không tìm thấy user"})
     getGardenById(@Param('id', ParseIntPipe) id : number){
         return this.gardenService.getGardenById(id)
     }
 
+    @Get('user')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Lấy danh sách garden của user hiện tại' })
+    @ApiResponse({ status: 200, description: 'Lấy thành công danh sách garden', type: [CreateGardenDto] })
+    @ApiResponse({ status: 401, description: 'Chưa xác thực' })
+    @ApiResponse({ status: 404, description: 'Không tìm thấy garden' })
+    async getGardens(@Request() req) {
+        const userId = req.user.id;
+        console.log('User ID from token:', userId);
+        return this.gardenService.getGardenByUserId(userId);
+    }
+
     @Post()
-    @UseGuards(JwtAuthGuard,OwnershipGuard)
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({summary:'tạo garden mới '})
     @ApiResponse({status:201, description:"tạo thành công garden", type: CreateGardenDto})
     @ApiResponse({status:401, description: "chưa xác thực"})
     @ApiResponse({status: 403, description: "Không có quyền truy cập"})
-    createGarden(@Body()dto: CreateGardenDto){{
-        return this.gardenService.createGarden(dto)
-    }}
+    createGarden(@Body()dto: CreateGardenDto,@Request() req){
+        const userId = req.user.id; // Lấy userId từ token
+        return this.gardenService.createGarden(dto, userId)
+    }
 
     @Put(':id')
     @UseGuards(JwtAuthGuard,OwnershipGuard)
