@@ -9,16 +9,16 @@ export declare class GardenController {
         name: string;
         userId: number;
     }[]>;
-    getGardenById(id: number): Promise<{
-        id: number;
-        name: string;
-        userId: number;
-    }>;
     getGardens(req: any): Promise<{
         id: number;
         name: string;
         userId: number;
     }[]>;
+    getGardenById(id: number, req: any): Promise<{
+        id: number;
+        name: string;
+        userId: number;
+    }>;
     createGarden(dto: CreateGardenDto, req: any): Promise<{
         id: number;
         name: string;

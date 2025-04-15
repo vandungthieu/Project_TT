@@ -3,6 +3,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 @Injectable()
 export class OwnershipGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
+    console.log('OwnershipGuard is running for endpoint:', context.getHandler().name);
     const request = context.switchToHttp().getRequest();
     const user = request.user; // Lấy user từ request (được gắn bởi JwtAuthGuard)
 

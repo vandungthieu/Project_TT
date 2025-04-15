@@ -30,13 +30,13 @@ let GardenController = class GardenController {
     getAllGarden() {
         return this.gardenService.getAllGarden();
     }
-    getGardenById(id) {
-        return this.gardenService.getGardenById(id);
-    }
     async getGardens(req) {
+        console.log('User from token:', req.user);
         const userId = req.user.id;
-        console.log('User ID from token:', userId);
         return this.gardenService.getGardenByUserId(userId);
+    }
+    getGardenById(id, req) {
+        return this.gardenService.getGardenById(id, req.user.id);
     }
     createGarden(dto, req) {
         const userId = req.user.id;
@@ -64,20 +64,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], GardenController.prototype, "getAllGarden", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'lấy garden theo Id) ' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công garden", type: create_garden_dto_1.CreateGardenDto }),
-    (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy user" }),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], GardenController.prototype, "getGardenById", null);
-__decorate([
     (0, common_1.Get)('user'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
@@ -91,8 +77,23 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GardenController.prototype, "getGardens", null);
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'lấy garden theo Id) ' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công garden", type: create_garden_dto_1.CreateGardenDto }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy user" }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", void 0)
+], GardenController.prototype, "getGardenById", null);
+__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'tạo garden mới ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: "tạo thành công garden", type: create_garden_dto_1.CreateGardenDto }),

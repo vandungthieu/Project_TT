@@ -5,38 +5,38 @@ export declare class UserService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     getAllUser(): Promise<{
-        id: number;
         email: string;
         name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }[]>;
     getUserById(id: number): Promise<{
-        id: number;
         email: string;
         name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     updateUser(id: number, dto: UpdateUserDto): Promise<{
-        id: number;
         email: string;
         name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     deleteUser(id: number): Promise<{
-        id: number;
         email: string;
         name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     createAdmin(dto: CreateUserDto): Promise<{
-        id: number;
         email: string;
         name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     updateUserRole(identifier: {
@@ -44,10 +44,10 @@ export declare class UserService {
     } | {
         email: string;
     }): Promise<{
-        id: number;
         email: string;
         name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     getPass(): Promise<void>;

@@ -25,18 +25,6 @@ export class GardenController{
         return this.gardenService.getAllGarden()
     }
 
-    @Get(':id')
-    @UseGuards(JwtAuthGuard,OwnershipGuard)
-    @ApiBearerAuth()
-    @ApiOperation({summary:'lấy garden theo Id) '})
-    @ApiResponse({status:200, description:"lấy thành công garden", type: CreateGardenDto})
-    @ApiResponse({status:401, description: "chưa xác thực"})
-    @ApiResponse({status: 403, description: "Không có quyền truy cập"})
-    @ApiResponse({status: 404, description:"Không tìm thấy user"})
-    getGardenById(@Param('id', ParseIntPipe) id : number){
-        return this.gardenService.getGardenById(id)
-    }
-
     @Get('user')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
@@ -45,13 +33,26 @@ export class GardenController{
     @ApiResponse({ status: 401, description: 'Chưa xác thực' })
     @ApiResponse({ status: 404, description: 'Không tìm thấy garden' })
     async getGardens(@Request() req) {
+        console.log('User from token:', req.user); 
         const userId = req.user.id;
-        console.log('User ID from token:', userId);
         return this.gardenService.getGardenByUserId(userId);
     }
 
-    @Post()
+    @Get(':id')
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({summary:'lấy garden theo Id) '})
+    @ApiResponse({status:200, description:"lấy thành công garden", type: CreateGardenDto})
+    @ApiResponse({status:401, description: "chưa xác thực"})
+    @ApiResponse({status: 403, description: "Không có quyền truy cập"})
+    @ApiResponse({status: 404, description:"Không tìm thấy user"})
+    getGardenById(@Param('id', ParseIntPipe) id: number, @Request() req){
+        return this.gardenService.getGardenById(id, req.user.id)
+    }
+
+
+    @Post()
+    @UseGuards(JwtAuthGuard, OwnershipGuard)
     @ApiBearerAuth()
     @ApiOperation({summary:'tạo garden mới '})
     @ApiResponse({status:201, description:"tạo thành công garden", type: CreateGardenDto})

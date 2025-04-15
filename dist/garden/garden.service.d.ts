@@ -14,7 +14,7 @@ export declare class GardenService {
         name: string;
         userId: number;
     }[]>;
-    getGardenById(id: number): Promise<{
+    getGardenById(id: number, userIdToken: number): Promise<{
         id: number;
         name: string;
         userId: number;

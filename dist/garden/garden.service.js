@@ -39,12 +39,15 @@ let GardenService = class GardenService {
     async getAllGarden() {
         return await this.prisma.garden.findMany();
     }
-    async getGardenById(id) {
+    async getGardenById(id, userIdToken) {
         const garden = await this.prisma.garden.findUnique({
             where: { id }
         });
         if (!garden) {
             throw new common_1.NotFoundException(`Not found garden: ${id}`);
+        }
+        else if (garden.userId != userIdToken) {
+            throw new common_1.ForbiddenException("You are not authorized to access this resource");
         }
         return garden;
     }

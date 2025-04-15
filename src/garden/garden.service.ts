@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateGardenDto } from "./dto/create-garden.dto";
 import { UpdateGardenDto } from "./dto/update-garden.dto";
@@ -35,12 +35,14 @@ export class GardenService{
     }
 
     //get garden by id
-    async getGardenById(id: number){
+    async getGardenById(id: number, userIdToken: number){
         const garden = await this.prisma.garden.findUnique({
             where: {id}
         })
         if(!garden){
             throw new NotFoundException(`Not found garden: ${id}`)
+        }else if(garden.userId != userIdToken){
+            throw new ForbiddenException("You are not authorized to access this resource")
         }
         return garden
     }
@@ -52,7 +54,7 @@ export class GardenService{
         })
         if(!gardens){
             throw new NotFoundException(`Not found userId:${userId}`)
-        }
+        } 
         return gardens
     }
 

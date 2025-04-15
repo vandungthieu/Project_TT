@@ -10,6 +10,7 @@ exports.OwnershipGuard = void 0;
 const common_1 = require("@nestjs/common");
 let OwnershipGuard = class OwnershipGuard {
     canActivate(context) {
+        console.log('OwnershipGuard is running for endpoint:', context.getHandler().name);
         const request = context.switchToHttp().getRequest();
         const user = request.user;
         if (!user) {
