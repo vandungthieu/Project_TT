@@ -13,7 +13,6 @@ export class AuthService{
 
     // đăng ký
     async register(dto: RegisterDto){
-        try{
             const existingUser = await this.prisma.user.findUnique({where: {email:dto.email}})
 
             if(existingUser){
@@ -27,9 +26,6 @@ export class AuthService{
                     password: hasedPassword
                 }
             })
-        } catch(err){
-            throw new Error("Email already exists");
-        }
         
     }
 

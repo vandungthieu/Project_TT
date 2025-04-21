@@ -5,45 +5,52 @@ export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
     createAdmin(dto: CreateUserDto): Promise<{
-        id: number;
-        name: string;
         email: string;
+        name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     getAllUser(): Promise<{
-        id: number;
-        name: string;
         email: string;
+        name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }[]>;
     getUserById(id: number): Promise<{
-        id: number;
-        name: string;
         email: string;
+        name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
-    updateUser(id: number, dto: UpdateUserDto): Promise<{
-        id: number;
-        name: string;
+    updateUserById(id: number, dto: UpdateUserDto): Promise<{
         email: string;
+        name: string;
         password: string;
+        id: number;
+        role: import(".prisma/client").$Enums.Role;
+    }>;
+    updateUser(req: any, dto: UpdateUserDto): Promise<{
+        email: string;
+        name: string;
+        password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     updateUserRole(id: number, email: string): Promise<{
-        id: number;
-        name: string;
         email: string;
+        name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
     deleteUser(id: number): Promise<{
-        id: number;
-        name: string;
         email: string;
+        name: string;
         password: string;
+        id: number;
         role: import(".prisma/client").$Enums.Role;
     }>;
 }

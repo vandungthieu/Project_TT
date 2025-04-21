@@ -17,16 +17,41 @@ let VegetableService = class VegetableService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async postVegetable(dto) {
+    async createVegetable(dto, user) {
         if (dto.quantityIn < dto.quantityOut) {
             throw new common_1.BadRequestException('Số lượng bán không được lớn hớn số lượng nhập');
+        }
+        const garden = await this.prisma.garden.findUnique({
+            where: { id: dto.gardenId }
+        });
+        if (!garden) {
+            throw new common_1.NotFoundException('Garden not found');
+        }
+        if (user.role !== 'admin' && garden.userId !== user.id) {
+            throw new common_1.ForbiddenException('You are not authorized to create a vegetable in this garden');
         }
         return await this.prisma.vegetable.create({
             data: dto
         });
     }
-    async getAllVegetable() {
-        return await this.prisma.vegetable.findMany();
+    async getAllVegetable(user) {
+        if (user.role === 'admin') {
+            return await this.prisma.vegetable.findMany();
+        }
+        else {
+            const userId = user.id;
+            const vegetables = await this.prisma.vegetable.findMany({
+                where: {
+                    garden: {
+                        userId
+                    }
+                }
+            });
+            if (!vegetables || vegetables.length === 0) {
+                throw new common_1.NotFoundException(`Không tìm thấy loại rau nào cho userId: ${userId}`);
+            }
+            return vegetables;
+        }
     }
     async getVegetableByUser(userId) {
         const vegetables = await this.prisma.vegetable.findMany({
@@ -41,16 +66,23 @@ let VegetableService = class VegetableService {
         }
         return vegetables;
     }
-    async getVegetable(gardenId) {
+    async getVegetable(gardenId, user) {
+        const garden = await this.prisma.garden.findUnique({
+            where: { id: gardenId }
+        });
+        if (!garden) {
+            throw new common_1.NotFoundException(`Not found garden: ${gardenId}`);
+        }
+        if (user.role !== 'admin' && user.id !== garden.userId) {
+            throw new common_1.ForbiddenException('You are not authorized to get vegetables in this garden');
+        }
         const vegetable = await this.prisma.vegetable.findMany({
             where: { gardenId }
         });
-        if (!vegetable) {
-            throw new common_1.NotFoundException(`Not found garden: ${gardenId}`);
+        if (vegetable.length === 0) {
+            throw new common_1.NotFoundException(`No vegetables found in garden ${gardenId}`);
         }
-        return await this.prisma.vegetable.findMany({
-            where: { gardenId }
-        });
+        return vegetable;
     }
     async updateVegetable(id, dto) {
         const vegetable = await this.prisma.vegetable.findUnique({

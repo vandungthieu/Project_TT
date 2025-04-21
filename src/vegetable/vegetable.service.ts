@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateVegetabletDto } from "./dto/create-vegetable.dto";
 import { UpdateVegetableDto } from "./dto/update-vegetable.dto";
@@ -8,18 +8,46 @@ export class VegetableService{
     constructor(private readonly prisma : PrismaService){}
 
     // thêm loại rau
-    async postVegetable(dto: CreateVegetabletDto){
+    async createVegetable(dto: CreateVegetabletDto, user : any){
        if(dto.quantityIn < dto.quantityOut){
         throw new BadRequestException('Số lượng bán không được lớn hớn số lượng nhập')
        }
+       const garden = await this.prisma.garden.findUnique({
+        where:{id: dto.gardenId}
+       })
+
+       if (!garden) {
+        throw new NotFoundException('Garden not found');
+      }
+
+      if(user.role !== 'admin' && garden.userId !== user.id){
+        throw new ForbiddenException('You are not authorized to create a vegetable in this garden')
+      }
+
        return await this.prisma.vegetable.create({
         data: dto
        })
     }
 
     //lấy tất cả danh sách rau
-    async getAllVegetable(){
-        return await this.prisma.vegetable.findMany()
+    async getAllVegetable(user: any){
+        if(user.role === 'admin'){
+            return await this.prisma.vegetable.findMany()
+        } else{
+            const userId = user.id
+            const vegetables = await this.prisma.vegetable.findMany({
+                where:{
+                    garden:{
+                         userId
+                    }
+                }
+            })
+            if (!vegetables || vegetables.length === 0) {
+                throw new NotFoundException(`Không tìm thấy loại rau nào cho userId: ${userId}`);
+              }
+            
+              return vegetables;
+        }
     }
 
     // lấy tất cả các loại rau bởi 1 người dùng
@@ -39,16 +67,24 @@ export class VegetableService{
     }
 
     // lấy danh sách rau bởi 1 khu vườn
-    async getVegetable(gardenId: number){
-       const vegetable = await this.prisma.vegetable.findMany({
-        where: {gardenId}
-       })
-       if(!vegetable){
-        throw new NotFoundException(`Not found garden: ${gardenId}`)
+    async getVegetable(gardenId: number, user: any){
+        const garden = await this.prisma.garden.findUnique({
+            where: {id: gardenId}
+        })
+        if(!garden){
+            throw new NotFoundException(`Not found garden: ${gardenId}`)
+        }
+
+        if(user.role !== 'admin' && user.id !== garden.userId){
+            throw new ForbiddenException('You are not authorized to get vegetables in this garden')
+        }
+        const vegetable = await this.prisma.vegetable.findMany({
+            where: {gardenId}
+        })
+       if(vegetable.length === 0){
+        throw new NotFoundException(`No vegetables found in garden ${gardenId}`)
        }
-       return await this.prisma.vegetable.findMany({
-        where: {gardenId}
-       })
+       return vegetable
     }
 
     // cập nhật rau

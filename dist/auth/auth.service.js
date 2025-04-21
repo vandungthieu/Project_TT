@@ -22,22 +22,17 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async register(dto) {
-        try {
-            const existingUser = await this.prisma.user.findUnique({ where: { email: dto.email } });
-            if (existingUser) {
-                throw new common_1.ConflictException("Email already exists");
+        const existingUser = await this.prisma.user.findUnique({ where: { email: dto.email } });
+        if (existingUser) {
+            throw new common_1.ConflictException("Email already exists");
+        }
+        const hasedPassword = await bcrypt.hash(dto.password, 10);
+        return await this.prisma.user.create({
+            data: {
+                ...dto,
+                password: hasedPassword
             }
-            const hasedPassword = await bcrypt.hash(dto.password, 10);
-            return await this.prisma.user.create({
-                data: {
-                    ...dto,
-                    password: hasedPassword
-                }
-            });
-        }
-        catch (err) {
-            throw new Error("Email already exists");
-        }
+        });
     }
     async validateUser(email, password) {
         const user = await this.prisma.user.findUnique({ where: { email: email } });

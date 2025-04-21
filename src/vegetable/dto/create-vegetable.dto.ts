@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateVegetabletDto{
     @ApiProperty({description: "id của garden", type: "integer", example: 1})
@@ -24,6 +24,11 @@ export class CreateVegetabletDto{
 
     @ApiProperty({description:'giá bán', type:'string', example:2.5})
     @IsNumber({ allowNaN: false, allowInfinity: false })
-    @IsNotEmpty()
-    price : number
+    @IsOptional()
+    price? : number
+
+    // @ApiProperty({ description: 'ID của user sở hữu (chỉ admin cung cấp)', example: 2, required: false })
+    // @IsInt()
+    // @IsOptional()
+    // userId?: number;
 }

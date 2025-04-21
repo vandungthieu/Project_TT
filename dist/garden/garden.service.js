@@ -17,63 +17,87 @@ let GardenService = class GardenService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async createGarden(dto, userId) {
+    async createGarden(dto, user) {
+        let userId;
+        if (user.role === 'admin' && dto.userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: dto.userId },
+            });
+            if (!user) {
+                throw new common_1.NotFoundException('User không tồn tại');
+            }
+            userId = dto.userId;
+        }
+        else {
+            if (dto.userId && dto.userId !== user.id) {
+                throw new common_1.ForbiddenException('You are not allowed to create a garden for another user');
+            }
+            userId = user.id;
+        }
         const existingGarden = await this.prisma.garden.findFirst({
             where: { name: dto.name, userId }
         });
         if (existingGarden) {
             throw new common_1.BadRequestException('Garden name already exists for this user');
         }
-        try {
-            return await this.prisma.garden.create({
-                data: {
-                    name: dto.name,
-                    userId
-                },
+        return await this.prisma.garden.create({
+            data: {
+                name: dto.name,
+                userId
+            }
+        });
+    }
+    async getGarden(user) {
+        if (user.role === 'admin') {
+            return await this.prisma.garden.findMany();
+        }
+        else {
+            return await this.prisma.garden.findMany({
+                where: { userId: user.id }
             });
         }
-        catch (error) {
-            throw new common_1.BadRequestException('Failed to create garden');
-        }
     }
-    async getAllGarden() {
-        return await this.prisma.garden.findMany();
-    }
-    async getGardenById(id, userIdToken) {
+    async getGardenById(id, user) {
         const garden = await this.prisma.garden.findUnique({
             where: { id }
         });
         if (!garden) {
             throw new common_1.NotFoundException(`Not found garden: ${id}`);
         }
-        else if (garden.userId != userIdToken) {
+        if (user.role !== 'admin' && garden.userId != user.id) {
             throw new common_1.ForbiddenException("You are not authorized to access this resource");
         }
         return garden;
     }
-    async getGardenByUserId(userId) {
-        const gardens = await this.prisma.garden.findMany({
-            where: { userId }
-        });
-        if (!gardens) {
-            throw new common_1.NotFoundException(`Not found userId:${userId}`);
-        }
-        return gardens;
-    }
-    async updateGardenById(id, dto) {
+    async updateGardenById(id, dto, user) {
         const garden = await this.prisma.garden.findUnique({ where: { id } });
         if (!garden) {
             throw new common_1.NotFoundException(`Not found garden: ${id}`);
+        }
+        if (user.role !== 'admin' && garden.userId !== user.id) {
+            throw new common_1.ForbiddenException('You are not allowed to update this garden');
+        }
+        const duplicate = await this.prisma.garden.findFirst({
+            where: {
+                name: dto.name,
+                userId: garden.userId
+            }
+        });
+        if (duplicate) {
+            throw new common_1.BadRequestException('Garden name already exists for this user');
         }
         return await this.prisma.garden.update({
             where: { id },
             data: dto
         });
     }
-    async deleteGarden(id) {
+    async deleteGarden(id, user) {
         const garden = await this.prisma.garden.findUnique({ where: { id } });
         if (!garden) {
             throw new common_1.NotFoundException(`Not found garden: ${id}`);
+        }
+        if (user.role !== 'admin' && user.id !== garden.userId) {
+            throw new common_1.ForbiddenException('You are not allowed to delete this garden');
         }
         return await this.prisma.garden.delete({
             where: { id },

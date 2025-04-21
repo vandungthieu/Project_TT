@@ -3,5 +3,5 @@ export declare class CreateVegetabletDto {
     name: string;
     quantityIn: number;
     quantityOut: number;
-    price: number;
+    price?: number;
 }

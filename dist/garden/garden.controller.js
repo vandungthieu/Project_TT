@@ -18,53 +18,31 @@ const swagger_1 = require("@nestjs/swagger");
 const garden_service_1 = require("./garden.service");
 const create_garden_dto_1 = require("./dto/create-garden.dto");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
-const roles_guard_1 = require("../auth/guards/roles.guard");
-const roles_decorator_1 = require("../common/decorators/roles.decorator");
-const ownership_guard_1 = require("../auth/guards/ownership.guard");
 const update_garden_dto_1 = require("./dto/update-garden.dto");
 let GardenController = class GardenController {
     gardenService;
     constructor(gardenService) {
         this.gardenService = gardenService;
     }
-    getAllGarden() {
-        return this.gardenService.getAllGarden();
-    }
     async getGardens(req) {
-        console.log('User from token:', req.user);
-        const userId = req.user.id;
-        return this.gardenService.getGardenByUserId(userId);
+        return this.gardenService.getGarden(req.user);
     }
     getGardenById(id, req) {
-        return this.gardenService.getGardenById(id, req.user.id);
+        return this.gardenService.getGardenById(id, req.user);
     }
     createGarden(dto, req) {
-        const userId = req.user.id;
-        return this.gardenService.createGarden(dto, userId);
+        return this.gardenService.createGarden(dto, req.user);
     }
-    updateGardenById(id, dto) {
-        return this.gardenService.updateGardenById(id, dto);
+    updateGardenById(id, dto, req) {
+        return this.gardenService.updateGardenById(id, dto, req.user);
     }
-    deleteGarden(id) {
-        return this.gardenService.deleteGarden(id);
+    deleteGarden(id, req) {
+        return this.gardenService.deleteGarden(id, req.user);
     }
 };
 exports.GardenController = GardenController;
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)('admin'),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'lấy tất cả garden (chỉ admin) ' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: "lấy thành công garden", type: create_garden_dto_1.CreateGardenDto }),
-    (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], GardenController.prototype, "getAllGarden", null);
-__decorate([
-    (0, common_1.Get)('user'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Lấy danh sách garden của user hiện tại' }),
@@ -93,7 +71,7 @@ __decorate([
 ], GardenController.prototype, "getGardenById", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'tạo garden mới ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: "tạo thành công garden", type: create_garden_dto_1.CreateGardenDto }),
@@ -107,7 +85,7 @@ __decorate([
 ], GardenController.prototype, "createGarden", null);
 __decorate([
     (0, common_1.Put)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'update garden theo id) ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: "update thành công garden", type: create_garden_dto_1.CreateGardenDto }),
@@ -116,13 +94,14 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy garden" }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, update_garden_dto_1.UpdateGardenDto]),
+    __metadata("design:paramtypes", [Number, update_garden_dto_1.UpdateGardenDto, Object]),
     __metadata("design:returntype", void 0)
 ], GardenController.prototype, "updateGardenById", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'xóa garden theo id) ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: "xóa thành công garden" }),
@@ -130,8 +109,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
     (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy garden" }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], GardenController.prototype, "deleteGarden", null);
 exports.GardenController = GardenController = __decorate([

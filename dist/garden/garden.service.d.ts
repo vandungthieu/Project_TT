@@ -4,34 +4,29 @@ import { UpdateGardenDto } from "./dto/update-garden.dto";
 export declare class GardenService {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    createGarden(dto: CreateGardenDto, userId: number): Promise<{
-        id: number;
+    createGarden(dto: CreateGardenDto, user: any): Promise<{
         name: string;
+        id: number;
         userId: number;
     }>;
-    getAllGarden(): Promise<{
-        id: number;
+    getGarden(user: any): Promise<{
         name: string;
+        id: number;
         userId: number;
     }[]>;
-    getGardenById(id: number, userIdToken: number): Promise<{
-        id: number;
+    getGardenById(id: number, user: any): Promise<{
         name: string;
+        id: number;
         userId: number;
     }>;
-    getGardenByUserId(userId: number): Promise<{
-        id: number;
+    updateGardenById(id: number, dto: UpdateGardenDto, user: any): Promise<{
         name: string;
-        userId: number;
-    }[]>;
-    updateGardenById(id: number, dto: UpdateGardenDto): Promise<{
         id: number;
-        name: string;
         userId: number;
     }>;
-    deleteGarden(id: number): Promise<{
-        id: number;
+    deleteGarden(id: number, user: any): Promise<{
         name: string;
+        id: number;
         userId: number;
     }>;
 }

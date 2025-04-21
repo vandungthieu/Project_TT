@@ -9,24 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateGardenDto = void 0;
+exports.UpdateSaleDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-class CreateGardenDto {
-    name;
-    userId;
+class UpdateSaleDto {
+    quantitySold;
+    totalPrice;
 }
-exports.CreateGardenDto = CreateGardenDto;
+exports.UpdateSaleDto = UpdateSaleDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Tên khu vườn', type: 'string', example: 'khu vườn trên mây' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateGardenDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: 'ID của user sở hữu (chỉ admin cung cấp)', example: 123, required: false }),
+    (0, swagger_1.ApiProperty)({ description: 'Số lượng bán', type: "integer", example: 1000 }),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
-], CreateGardenDto.prototype, "userId", void 0);
-//# sourceMappingURL=create-garden.dto.js.map
+], UpdateSaleDto.prototype, "quantitySold", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'tổng giá bán', type: 'string', example: 2.5 }),
+    (0, class_validator_1.IsNumber)({ allowNaN: false, allowInfinity: false }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateSaleDto.prototype, "totalPrice", void 0);
+//# sourceMappingURL=update-sale.dto.js.map

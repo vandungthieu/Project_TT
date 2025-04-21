@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Request, UseGuards } from "@nestjs/common"
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger"
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard"
 import { RolesGuard } from "src/auth/guards/roles.guard"
@@ -38,10 +38,11 @@ export class UserController{
         return this.userService.getAllUser()
     }
     
-    @UseGuards(JwtAuthGuard, OwnershipGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Get(':id')
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Lấy thông tin người dùng theo ID (chủ sở hữu hoặc Admin)' })
+    @ApiOperation({ summary: 'Lấy thông tin người dùng theo ID chỉ Admin' })
     @ApiResponse({ status: 200, description: 'Thông tin người dùng', type: CreateUserDto })
     @ApiResponse({ status: 401, description: 'Chưa xác thực' })
     @ApiResponse({ status: 403, description: 'Không có quyền truy cập' })
@@ -50,7 +51,7 @@ export class UserController{
         return this.userService.getUserById((id))
     }
 
-    @UseGuards(JwtAuthGuard, OwnershipGuard)
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Cập nhật thông tin người dùng (chủ sở hữu hoặc Admin)' })
     @ApiResponse({ status: 200, description: 'Người dùng đã được cập nhật', type: CreateUserDto })
@@ -58,8 +59,20 @@ export class UserController{
     @ApiResponse({ status: 403, description: 'Không có quyền truy cập' })
     @ApiResponse({ status: 404, description: 'Không tìm thấy người dùng' })
     @Put(':id')
-    updateUser(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto){
+    updateUserById(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto){
         return this.userService.updateUser(id, dto)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Cập nhật thông tin người dùng (chủ sở hữu hoặc Admin)' })
+    @ApiResponse({ status: 200, description: 'Người dùng đã được cập nhật', type: CreateUserDto })
+    @ApiResponse({ status: 401, description: 'Chưa xác thực' })
+    @ApiResponse({ status: 403, description: 'Không có quyền truy cập' })
+    @ApiResponse({ status: 404, description: 'Không tìm thấy người dùng' })
+    @Put()
+    updateUser(@Request() req, @Body() dto: UpdateUserDto){
+        return this.userService.updateUser(req.user.id, dto)
     }
 
 

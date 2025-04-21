@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateGardenDto{
     @ApiProperty({description:'Tên khu vườn', type: 'string', example:'khu vườn trên mây'})
@@ -7,9 +7,9 @@ export class CreateGardenDto{
     @IsNotEmpty()
     name : string
 
-    // @ApiProperty({description:'id chủ sở hữu', type:'integer', example: 123})
-    // @IsInt()
-    // @IsNotEmpty()
-    // userId : number
+    @ApiProperty({ description: 'ID của user sở hữu (chỉ admin cung cấp)', example: 123, required: false })
+    @IsInt()
+    @IsOptional()
+    userId?: number;
 
 }

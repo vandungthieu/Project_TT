@@ -9,45 +9,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateVegetabletDto = void 0;
+exports.CreateSaleDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-class CreateVegetabletDto {
+class CreateSaleDto {
     gardenId;
-    name;
-    quantityIn;
-    quantityOut;
-    price;
+    vegetableId;
+    quantitySold;
+    totalPrice;
+    time;
 }
-exports.CreateVegetabletDto = CreateVegetabletDto;
+exports.CreateSaleDto = CreateSaleDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ description: "id của garden", type: "integer", example: 1 }),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], CreateVegetabletDto.prototype, "gardenId", void 0);
+], CreateSaleDto.prototype, "gardenId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'tên loại rau', type: 'string', example: "rau chân vịt" }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateVegetabletDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Số lượng nhập', type: "integer", example: 1000 }),
+    (0, swagger_1.ApiProperty)({ description: "id của vegetable", type: "integer", example: 1 }),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], CreateVegetabletDto.prototype, "quantityIn", void 0);
+], CreateSaleDto.prototype, "vegetableId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'Số lượng bán', type: "integer", example: 1000 }),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], CreateVegetabletDto.prototype, "quantityOut", void 0);
+], CreateSaleDto.prototype, "quantitySold", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'giá bán', type: 'string', example: 2.5 }),
+    (0, swagger_1.ApiProperty)({ description: 'tổng giá bán', type: 'string', example: 2.5 }),
     (0, class_validator_1.IsNumber)({ allowNaN: false, allowInfinity: false }),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], CreateVegetabletDto.prototype, "price", void 0);
-//# sourceMappingURL=create-vegetable.dto.js.map
+], CreateSaleDto.prototype, "totalPrice", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Thời gian bán (ISO 8601)', example: '2025-02-31T14:30:00Z', type: String }),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsISO8601)(),
+    __metadata("design:type", String)
+], CreateSaleDto.prototype, "time", void 0);
+//# sourceMappingURL=create-sale.dto.js.map

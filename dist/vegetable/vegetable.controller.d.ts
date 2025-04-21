@@ -4,7 +4,7 @@ import { UpdateVegetableDto } from "./dto/update-vegetable.dto";
 export declare class VegetableController {
     private readonly vegetableService;
     constructor(vegetableService: VegetableService);
-    postVegetable(dto: CreateVegetabletDto): Promise<{
+    createVegetable(dto: CreateVegetabletDto, req: any): Promise<{
         id: number;
         name: string;
         quantityIn: number;
@@ -12,7 +12,7 @@ export declare class VegetableController {
         price: number | null;
         gardenId: number;
     }>;
-    getAllVegetable(): Promise<{
+    getAllVegetable(req: any): Promise<{
         id: number;
         name: string;
         quantityIn: number;
@@ -20,7 +20,7 @@ export declare class VegetableController {
         price: number | null;
         gardenId: number;
     }[]>;
-    getVegetableByUserId(usedId: number): Promise<{
+    getVegetable(gardeId: number, req: any): Promise<{
         id: number;
         name: string;
         quantityIn: number;
@@ -28,15 +28,7 @@ export declare class VegetableController {
         price: number | null;
         gardenId: number;
     }[]>;
-    getVegetable(gardeId: number): Promise<{
-        id: number;
-        name: string;
-        quantityIn: number;
-        quantityOut: number;
-        price: number | null;
-        gardenId: number;
-    }[]>;
-    updateVegetable(id: number, dto: UpdateVegetableDto): Promise<{
+    updateVegetable(id: number, dto: UpdateVegetableDto, req: any): Promise<{
         id: number;
         name: string;
         quantityIn: number;
