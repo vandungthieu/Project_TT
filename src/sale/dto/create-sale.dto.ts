@@ -15,7 +15,7 @@ export class CreateSaleDto{
         @ApiProperty({description:'Số lượng bán', type:"integer", example:1000})
         @IsInt()
         @IsNotEmpty()
-        quantitySold : number 
+        quantity : number 
     
     
         @ApiProperty({description:'tổng giá bán', type:'string', example:2.5})
@@ -26,6 +26,6 @@ export class CreateSaleDto{
         @ApiProperty({ description: 'Thời gian bán (ISO 8601)', example: '2025-02-31T14:30:00Z', type: String })
         @IsNotEmpty()
         @IsISO8601()
-        time: string;
+        soldAt: string;
         
 }
