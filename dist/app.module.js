@@ -15,6 +15,7 @@ const auth_module_1 = require("./auth/auth.module");
 const garden_module_1 = require("./garden/garden.module");
 const user_module_1 = require("./user/user.module");
 const vegetable_module_1 = require("./vegetable/vegetable.module");
+const sale_module_1 = require("./sale/sale.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -27,7 +28,7 @@ let AppModule = class AppModule {
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, garden_module_1.GardenModule, user_module_1.UsersModule, vegetable_module_1.VegetableModule],
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, garden_module_1.GardenModule, user_module_1.UsersModule, vegetable_module_1.VegetableModule, sale_module_1.SaleModule],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

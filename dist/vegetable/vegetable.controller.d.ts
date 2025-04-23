@@ -20,6 +20,14 @@ export declare class VegetableController {
         price: number | null;
         gardenId: number;
     }[]>;
+    getVegetableById(id: number, req: any): Promise<{
+        id: number;
+        name: string;
+        quantityIn: number;
+        quantityOut: number;
+        price: number | null;
+        gardenId: number;
+    }>;
     getVegetable(gardeId: number, req: any): Promise<{
         id: number;
         name: string;

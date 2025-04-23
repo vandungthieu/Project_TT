@@ -53,6 +53,24 @@ let VegetableService = class VegetableService {
             return vegetables;
         }
     }
+    async getVegetableById(id, user) {
+        const vegetable = await this.prisma.vegetable.findUnique({
+            where: { id }
+        });
+        if (!vegetable) {
+            throw new common_1.NotFoundException(`Not found vegetable: ${id}`);
+        }
+        const garden = await this.prisma.garden.findUnique({
+            where: { id: vegetable.gardenId },
+        });
+        if (!garden) {
+            throw new common_1.NotFoundException(`Not found garden`);
+        }
+        if (user.role !== 'admin' && user.id !== garden.userId) {
+            throw new common_1.ForbiddenException('You are not authorized to get vegetables in this garden');
+        }
+        return vegetable;
+    }
     async getVegetableByUser(userId) {
         const vegetables = await this.prisma.vegetable.findMany({
             where: {

@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { GardenModule } from './garden/garden.module';
 import { UsersModule } from './user/user.module';
 import { VegetableModule } from './vegetable/vegetable.module';
+import { SaleModule } from './sale/sale.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, GardenModule,UsersModule, VegetableModule ],
+  imports: [PrismaModule, AuthModule, GardenModule,UsersModule, VegetableModule, SaleModule ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer){

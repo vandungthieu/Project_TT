@@ -31,6 +31,9 @@ let VegetableController = class VegetableController {
     getAllVegetable(req) {
         return this.vegetableService.getAllVegetable(req.user);
     }
+    getVegetableById(id, req) {
+        return this.vegetableService.getVegetableById(id, req.user);
+    }
     getVegetable(gardeId, req) {
         return this.vegetableService.getVegetable(gardeId, req.user);
     }
@@ -67,6 +70,8 @@ __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'lấy vegetable' }),
+    (0, swagger_1.ApiQuery)({ name: 'page', type: Number, required: false, description: 'Số trang (mặc định: 1)' }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', type: Number, required: false, description: 'Số bản ghi mỗi trang (mặc định: 10)' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công vegetable", type: create_vegetable_dto_1.CreateVegetabletDto }),
     (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
     (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
@@ -76,11 +81,30 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], VegetableController.prototype, "getAllVegetable", null);
 __decorate([
+    (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'lấy vegetable theo id  ' }),
+    (0, swagger_1.ApiQuery)({ name: 'page', type: Number, required: false, description: 'Số trang (mặc định: 1)' }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', type: Number, required: false, description: 'Số bản ghi mỗi trang (mặc định: 10)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công", type: create_vegetable_dto_1.CreateVegetabletDto }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy garden" }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", void 0)
+], VegetableController.prototype, "getVegetableById", null);
+__decorate([
     (0, common_1.Get)('garden/:gardenId'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'lấy vegetable theo garden id  ' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: "lấy thành công", type: create_vegetable_dto_1.CreateVegetabletDto }),
+    (0, swagger_1.ApiQuery)({ name: 'page', type: Number, required: false, description: 'Số trang (mặc định: 1)' }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', type: Number, required: false, description: 'Số bản ghi mỗi trang (mặc định: 10)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công", type: create_vegetable_dto_1.CreateVegetabletDto }),
     (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
     (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
     (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy garden" }),
@@ -107,7 +131,7 @@ __decorate([
 ], VegetableController.prototype, "updateVegetable", null);
 __decorate([
     (0, common_1.Put)(':id/price'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'cập nhật vegetable price ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: "thành công", type: create_vegetable_dto_1.CreateVegetabletDto }),

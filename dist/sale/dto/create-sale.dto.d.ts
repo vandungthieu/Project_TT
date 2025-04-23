@@ -1,7 +1,6 @@
 export declare class CreateSaleDto {
-    gardenId: number;
     vegetableId: number;
-    quantitySold: number;
+    quantity: number;
     totalPrice: number;
-    time: string;
+    soldAt: string;
 }

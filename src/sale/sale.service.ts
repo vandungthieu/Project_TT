@@ -8,29 +8,25 @@ export class SaleService{
 
     // create sale
     async createSale(dto: CreateSaleDto, user: any){
-        const garden = await this.prisma.garden.findUnique({
-            where:{id: dto.gardenId}
-        })
-
-        if(!garden){
-            throw new NotFoundException(`Garden not found with ID ${dto.gardenId}`);
-        }
-
-        // nếu không phải admin thì chỉ tạo sale cho mình
-        if(user.role !== 'admin' && user.id !== garden.userId){
-            throw new ForbiddenException('You are not authorized to create a sale for this garden')
-        }
         const vegetable = await this.prisma.vegetable.findUnique({
             where: { id: dto.vegetableId },
           });
         
-          if (!vegetable) {
+        if (!vegetable) {
             throw new NotFoundException(`Vegetable not found with ID ${dto.vegetableId}`);
         }
 
-        // kiểm tra vegetable có thuộc garden đó không
-        if (vegetable.gardenId !== garden.id) {
-            throw new BadRequestException('This vegetable does not belong to the specified garden');
+        const garden = await this.prisma.garden.findUnique({
+            where:{id: vegetable.gardenId}
+        })
+
+        if(!garden){
+            throw new NotFoundException(`Garden not found`);
+        }
+
+        // nếu không phải admin thì chỉ tạo sale cho mình
+        if(user.role !== 'admin' && user.id !== garden.userId){
+            throw new ForbiddenException('You are not authorized to create a sale for this vegetable')
         }
 
         // Tính số lượng hiện tại còn có thể bán
@@ -50,13 +46,41 @@ export class SaleService{
 
         //tạo sale
         return await this.prisma.sale.create({
-            data: dto
+            data: {
+                gardenId: garden.id,
+                vegetableId: dto.vegetableId,
+                quantity: dto.quantity,
+                totalPrice: dto.totalPrice,
+                soldAt: new Date(dto.soldAt),
+            }
         })
 
     }
 
-    // lấy doanh thu
+    // lấy doanh thu theo người dùng
+    async getRevenue( user: any){
+        const sales = await this.prisma.sale.findMany({
+            where:{
+                ...(user.role !== 'admin' && {
+                    garden:{
+                        userId: user.id
+                    }
+                })
+            },
+            // include: {
+            //     garden: true,
+            //     vegetable: true,
+            // },
+        })
 
+        const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+
+        return {
+            totalRevenue,
+            numberOfSales: sales.length,
+            sales,
+        };
+    }
 
     // lấy doanh thu theo khu vườn
     async getRevenueByGarden(gardenId: number, user: any){
@@ -86,52 +110,22 @@ export class SaleService{
 
     }
 
-    // lấy doanh thu theo thời gian
-    async getRevenueByTime(from: string, to: string, user: any){
-        const fromDate = new Date(from)
-        const toDate = new Date(to)
+    // truy vấn theo thời gian
+    async getRevenueList(unit : 'day'|'week' | 'month', user : any,  from?: string, to?: string){
+        const whereCondition : any = {}
 
-        if(isNaN(fromDate.getTime()) || isNaN(toDate.getTime())){
-            throw new BadRequestException('Invalid date format');
+        if(user.role !== 'admin'){
+            whereCondition.garden = {userId: user.id}
+        }
+
+        if(from || to){
+            whereCondition.time = {}
+            if(from) whereCondition.time.gte = new Date(from);
+            if(to) whereCondition.time.lte = new Date(to)
         }
 
         const sales = await this.prisma.sale.findMany({
-            where:{
-                soldAt: {
-                    gte: fromDate,
-                    lte: toDate
-                },
-                ...(user.role !== 'admin' && {
-                    garden:{
-                        userId: user.id
-                    }
-                })
-            },
-            include: {
-                garden: true,
-                vegetable: true,
-              },
-        })
-
-        const totalRevenue = sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
-
-        return {
-            from,
-            to,
-            totalRevenue,
-            numberOfSales: sales.length,
-            sales,
-        };
-    }
-
-    // truy vấn theo thời gian
-    async getRevenueList(unit : 'day'|'week' | 'month', user : any){
-        const sales = await this.prisma.sale.findMany({
-            where: user.role === 'admin' ? {}: {
-                garden:{
-                    userId: user.id
-                }
-            },
+            where: whereCondition,
             include:{
                 garden: true
             }
@@ -139,7 +133,7 @@ export class SaleService{
 
         const groupKey = (date : Date) =>{
             const d = new Date(date)
-            if(unit === 'day') return d.toISOString().slice(0,10)
+            if(unit === 'day') return d.toISOString().slice(0,10) //cắt chuỗi 10 ký tự
             if (unit === 'week') {
                 const firstDayOfWeek = new Date(d.setDate(d.getDate() - d.getDay()));
                 return firstDayOfWeek.toISOString().slice(0, 10);
@@ -151,15 +145,25 @@ export class SaleService{
         };
               
         const revenueMap: Record<string, number> = {};
+
         for (const sale of sales) {
             const key = groupKey(sale.soldAt);
             revenueMap[key] = (revenueMap[key] || 0) + sale.totalPrice;
         }
               
-        return Object.entries(revenueMap).map(([time, revenue]) => ({
+        const data =  Object.entries(revenueMap).map(([time, revenue]) => ({
             time, revenue
-        })
-    );
+        }));
+
+        const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+
+        return {
+            unit,
+            from: from || null,
+            to: to || null,
+            totalRevenue,
+            data
+        };
             
     }
 

@@ -20,6 +20,14 @@ export declare class VegetableService {
         price: number | null;
         gardenId: number;
     }[]>;
+    getVegetableById(id: number, user: any): Promise<{
+        id: number;
+        name: string;
+        quantityIn: number;
+        quantityOut: number;
+        price: number | null;
+        gardenId: number;
+    }>;
     getVegetableByUser(userId: number): Promise<{
         id: number;
         name: string;

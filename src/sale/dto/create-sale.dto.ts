@@ -2,10 +2,10 @@ import { ApiProperty } from "@nestjs/swagger"
 import { IsInt, IsISO8601, IsNotEmpty, IsNumber } from "class-validator"
 
 export class CreateSaleDto{
-        @ApiProperty({description: "id của garden", type: "integer", example: 1})
-        @IsInt()
-        @IsNotEmpty()
-        gardenId: number
+        // @ApiProperty({description: "id của garden", type: "integer", example: 1})
+        // @IsInt()
+        // @IsNotEmpty()
+        // gardenId: number
     
         @ApiProperty({description: "id của vegetable", type: "integer", example: 1})
         @IsInt()

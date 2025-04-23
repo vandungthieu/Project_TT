@@ -30,7 +30,7 @@ export class VegetableService{
     }
 
     //lấy tất cả danh sách rau
-    async getAllVegetable(user: any){
+    async getAllVegetable(user: any ){
         if(user.role === 'admin'){
             return await this.prisma.vegetable.findMany()
         } else{
@@ -49,6 +49,32 @@ export class VegetableService{
               return vegetables;
         }
     }
+
+
+    //lấy vegetable bởi id
+    async getVegetableById(id: number, user: any){
+        const vegetable = await this.prisma.vegetable.findUnique({
+            where: {id}
+        })
+        if(!vegetable){
+            throw new NotFoundException(`Not found vegetable: ${id}`)
+        }
+
+        const garden = await this.prisma.garden.findUnique({
+            where: { id: vegetable.gardenId }, 
+        });
+
+        if(!garden){
+            throw new NotFoundException(`Not found garden`)
+        }
+
+        if(user.role !== 'admin' && user.id !== garden.userId){
+            throw new ForbiddenException('You are not authorized to get vegetables in this garden')
+        }
+        
+       return vegetable
+    }
+
 
     // lấy tất cả các loại rau bởi 1 người dùng
     async getVegetableByUser(userId: number){

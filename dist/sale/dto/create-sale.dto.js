@@ -13,19 +13,12 @@ exports.CreateSaleDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class CreateSaleDto {
-    gardenId;
     vegetableId;
-    quantitySold;
+    quantity;
     totalPrice;
-    time;
+    soldAt;
 }
 exports.CreateSaleDto = CreateSaleDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: "id của garden", type: "integer", example: 1 }),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateSaleDto.prototype, "gardenId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: "id của vegetable", type: "integer", example: 1 }),
     (0, class_validator_1.IsInt)(),
@@ -37,7 +30,7 @@ __decorate([
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], CreateSaleDto.prototype, "quantitySold", void 0);
+], CreateSaleDto.prototype, "quantity", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'tổng giá bán', type: 'string', example: 2.5 }),
     (0, class_validator_1.IsNumber)({ allowNaN: false, allowInfinity: false }),
@@ -49,5 +42,5 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsISO8601)(),
     __metadata("design:type", String)
-], CreateSaleDto.prototype, "time", void 0);
+], CreateSaleDto.prototype, "soldAt", void 0);
 //# sourceMappingURL=create-sale.dto.js.map
