@@ -107,10 +107,11 @@ export class VegetableService{
         const vegetable = await this.prisma.vegetable.findMany({
             where: {gardenId}
         })
-       if(vegetable.length === 0){
-        throw new NotFoundException(`No vegetables found in garden ${gardenId}`)
-       }
-       return vegetable
+        if(vegetable.length === 0){
+            throw new NotFoundException(`No vegetables found in garden ${gardenId}`)
+        }
+        
+        return vegetable
     }
 
     // cập nhật rau
