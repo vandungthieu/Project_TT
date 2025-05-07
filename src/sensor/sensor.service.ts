@@ -113,6 +113,7 @@ export class SensorService{
         })
     }
 
+    //delete sensor
     async deleteSensor(id: number, user: any){
         const sensor = await this.prisma.sensorData.findUnique({
             where:{id}
