@@ -96,7 +96,7 @@ export class VegetableController{
     }
 
     @Delete(':id/price')
-    @UseGuards(JwtAuthGuard,OwnershipGuard)
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({summary:'xóa vegetable price '})
     @ApiResponse({status:201, description:"thành công"})
@@ -108,10 +108,10 @@ export class VegetableController{
     }
 
     @Get(':id/price')
-    @UseGuards(JwtAuthGuard,OwnershipGuard)
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({summary:'lấy vegetable price '})
-    @ApiResponse({status:201, description:"thành công"})
+    @ApiResponse({status:200, description:"thành công"})
     @ApiResponse({status:401, description: "chưa xác thực"})
     @ApiResponse({status: 403, description: "Không có quyền truy cập"})
     @ApiResponse({status: 404, description: "Không tìm thấy vegetable"})

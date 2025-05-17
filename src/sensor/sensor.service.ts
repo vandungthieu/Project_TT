@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateSensorDto } from "./dto/create-sensor.dto";
 import { UpdateSensorDto } from "./dto/update-sensor.dto";
@@ -68,6 +68,88 @@ export class SensorService{
         }
         
         return sensor;
+    }
+
+    async getSensorDataByTime(from: string, to: string, gardenId: number, user: any) {
+        const garden = await this.prisma.garden.findUnique({
+          where: { id: gardenId },
+        });
+    
+        if (!garden) {
+          throw new NotFoundException(`Garden with id ${gardenId} not found`);
+        }
+    
+        // Kiểm tra quyền
+        if (user.role !== 'admin' && garden.userId !== user.id) {
+          throw new ForbiddenException('You are not authorized to access this garden\'s sensor data');
+        }
+    
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+    
+        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+          throw new BadRequestException('Invalid date format');
+        }
+    
+        const sensorData = await this.prisma.sensorData.findMany({
+          where: {
+            gardenId,
+            timestamp: {
+              gte: fromDate,
+              lte: toDate,
+            },
+          },
+          orderBy: {
+            timestamp: 'asc',
+          },
+        });
+    
+        return sensorData;
+      }
+    
+      async getAverageSensorData24h(gardenId: number, user: any) {
+        const garden = await this.prisma.garden.findUnique({
+          where: { id: gardenId },
+        });
+    
+        if (!garden) {
+          throw new NotFoundException(`Garden with id ${gardenId} not found`);
+        }
+    
+        // Kiểm tra quyền
+        if (user.role !== 'admin' && garden.userId !== user.id) {
+          throw new ForbiddenException('You are not authorized to access this garden\'s sensor data');
+        }
+    
+        const toDate = new Date();
+        const fromDate = new Date(toDate.getTime() - 24 * 60 * 60 * 1000);
+    
+        const data = await this.prisma.sensorData.findMany({
+          where: {
+            gardenId,
+            timestamp: {
+              gte: fromDate,
+              lte: toDate,
+            },
+          },
+        });
+    
+        if (data.length === 0) {
+          throw new NotFoundException('No sensor data found for the last 24 hours');
+        }
+    
+        const avgTemp = data.reduce((sum, d) => sum + d.temperature, 0) / data.length;
+        const avgHumidity = data.reduce((sum, d) => sum + d.humidity, 0) / data.length;
+    
+        return {
+          gardenId,
+          averageTemperature: avgTemp.toFixed(2),
+          averageHumidity: avgHumidity.toFixed(2),
+          totalRecords: data.length,
+          from: fromDate,
+          to: toDate,
+        };
+      
     }
 
     // get sensor by garden

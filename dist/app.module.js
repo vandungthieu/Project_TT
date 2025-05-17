@@ -16,6 +16,10 @@ const garden_module_1 = require("./garden/garden.module");
 const user_module_1 = require("./user/user.module");
 const vegetable_module_1 = require("./vegetable/vegetable.module");
 const sale_module_1 = require("./sale/sale.module");
+const sensor_module_1 = require("./sensor/sensor.module");
+const mqtt_module_1 = require("./mqtt/mqtt.module");
+const websocket_module_1 = require("./websocket/websocket.module");
+const data_processor_module_1 = require("./data/data-processor.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -28,7 +32,7 @@ let AppModule = class AppModule {
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, garden_module_1.GardenModule, user_module_1.UsersModule, vegetable_module_1.VegetableModule, sale_module_1.SaleModule],
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, garden_module_1.GardenModule, user_module_1.UsersModule, vegetable_module_1.VegetableModule, sale_module_1.SaleModule, sensor_module_1.SensorModule, mqtt_module_1.MqttModule, websocket_module_1.WebsocketModule, data_processor_module_1.DataProcessorModule],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

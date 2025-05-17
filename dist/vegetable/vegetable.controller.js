@@ -18,7 +18,6 @@ const swagger_1 = require("@nestjs/swagger");
 const vegetable_service_1 = require("./vegetable.service");
 const create_vegetable_dto_1 = require("./dto/create-vegetable.dto");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
-const ownership_guard_1 = require("../auth/guards/ownership.guard");
 const update_vegetable_dto_1 = require("./dto/update-vegetable.dto");
 let VegetableController = class VegetableController {
     vegetableService;
@@ -145,7 +144,7 @@ __decorate([
 ], VegetableController.prototype, "createPrice", null);
 __decorate([
     (0, common_1.Delete)(':id/price'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'xóa vegetable price ' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: "thành công" }),
@@ -159,10 +158,10 @@ __decorate([
 ], VegetableController.prototype, "deletePrice", null);
 __decorate([
     (0, common_1.Get)(':id/price'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, ownership_guard_1.OwnershipGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'lấy vegetable price ' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: "thành công" }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "thành công" }),
     (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
     (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
     (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy vegetable" }),

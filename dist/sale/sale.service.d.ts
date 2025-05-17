@@ -5,22 +5,22 @@ export declare class SaleService {
     constructor(prisma: PrismaService);
     createSale(dto: CreateSaleDto, user: any): Promise<{
         id: number;
+        gardenId: number;
+        vegetableId: number;
         quantity: number;
         totalPrice: number;
         soldAt: Date;
-        gardenId: number;
-        vegetableId: number;
     }>;
     getRevenue(user: any): Promise<{
         totalRevenue: number;
         numberOfSales: number;
         sales: {
             id: number;
+            gardenId: number;
+            vegetableId: number;
             quantity: number;
             totalPrice: number;
             soldAt: Date;
-            gardenId: number;
-            vegetableId: number;
         }[];
     }>;
     getRevenueByGarden(gardenId: number, user: any): Promise<{

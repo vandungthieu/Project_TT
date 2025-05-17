@@ -5,11 +5,11 @@ export declare class SaleController {
     constructor(saleService: SaleService);
     createSale(dto: CreateSaleDto, req: any): Promise<{
         id: number;
+        gardenId: number;
+        vegetableId: number;
         quantity: number;
         totalPrice: number;
         soldAt: Date;
-        gardenId: number;
-        vegetableId: number;
     }>;
     getSaleByGarden(gardenId: number, req: any): Promise<{
         gardenId: number;
@@ -21,11 +21,11 @@ export declare class SaleController {
         numberOfSales: number;
         sales: {
             id: number;
+            gardenId: number;
+            vegetableId: number;
             quantity: number;
             totalPrice: number;
             soldAt: Date;
-            gardenId: number;
-            vegetableId: number;
         }[];
     }>;
     getTotalRevenue(unit: 'day' | 'week' | 'month', from: string, to: string, req: any): Promise<{
