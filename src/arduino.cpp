@@ -1,15 +1,18 @@
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <PubSubClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
 
 #define DHTPIN 14        // D5 trên NodeMCU
-#define DHTTYPE DHT11    // DHT11 hoặc DHT22
+#define DHTTYPE DHT22    // DHT11 hoặc DHT22
 
 // Định nghĩa chân cho 3 đèn LED
 #define LED1_PIN 5  // D1
 #define LED2_PIN 4  // D2
 #define LED3_PIN 0  // D3
+
+// gardenId
+const int gardenId = 10;
 
 // Cấu hình WiFi
 const char* ssid = "Happy502";
@@ -92,8 +95,28 @@ void callback(char* topic, byte* payload, unsigned int length) {
       }
     }
 
-    // Có thể mở rộng cho LED2, LED3
-    // Ví dụ: const char* led2State = data_doc["led2State"];
+    const char* led2State = data_doc["led2State"];
+    if (led2State) {
+      if (String(led2State) == "On") {
+        digitalWrite(LED2_PIN, HIGH);
+        Serial.println("LED2: Bật");
+      } else if (String(led2State) == "Off") {
+        digitalWrite(LED2_PIN, LOW);
+        Serial.println("LED2: Tắt");
+      }
+    }
+
+    const char* led3State = data_doc["led3State"];
+    if (led3State) {
+      if (String(led3State) == "On") {
+        digitalWrite(LED3_PIN, HIGH);
+        Serial.println("LED3: Bật");
+      } else if (String(led3State) == "Off") {
+        digitalWrite(LED3_PIN, LOW);
+        Serial.println("LED3: Tắt");
+      }
+    }
+
   }
 }
 
@@ -102,7 +125,7 @@ void reconnect() {
     Serial.print("Đang kết nối MQTT...");
     String clientId = "ESP8266Client-" + String(random(0xffff), HEX);
     if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
-      Serial.println(" Kết nối thành công");
+      Serial.println(" Kết nối thành công MQTT");
       // Subscribe vào topic điều khiển
       client.subscribe(control_topic);
     } else {
@@ -149,6 +172,7 @@ void loop() {
   } else {
     // Tạo dữ liệu JSON
     String payload = "{";
+    payload += "\"gardenId\":" + String(gardenId) + ",";
     payload += "\"temperature\":" + String(temperature, 2) + ",";
     payload += "\"humidity\":" + String(humidity, 2);
     payload += "}";
@@ -164,5 +188,5 @@ void loop() {
     }
   }
 
-  delay(5000); // Gửi dữ liệu mỗi 5 giây
+  delay(10000); // Gửi dữ liệu mỗi 10 giây
 }

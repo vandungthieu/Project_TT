@@ -23,10 +23,10 @@ export declare class DataProcessorService {
         message: string;
         savedData: {
             id: number;
-            gardenId: number;
             temperature: number;
             humidity: number;
             timestamp: Date;
+            gardenId: number;
         };
         received?: undefined;
     }>;
@@ -36,8 +36,6 @@ export declare class DataProcessorService {
         data: any;
     }): Promise<{
         gardenId: number;
-        temperature: number;
-        humidity: number;
         timestamp: Date;
         user: {
             id: number;

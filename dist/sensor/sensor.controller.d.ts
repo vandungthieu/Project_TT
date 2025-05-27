@@ -6,31 +6,31 @@ export declare class SensorController {
     constructor(sensorService: SensorService);
     createSensor(dto: CreateSensorDto, req: any): Promise<{
         id: number;
-        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
+        gardenId: number;
     }>;
     getSensorById(id: number, req: any): Promise<{
         id: number;
-        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
+        gardenId: number;
     }>;
     getSensorByGardenId(gardenId: number, req: any): Promise<{
         id: number;
-        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
+        gardenId: number;
     }[]>;
     getByTime(gardenId: number, from: string, to: string, req: any): Promise<{
         id: number;
-        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
+        gardenId: number;
     }[]>;
     getAverage24h(gardenId: number, req: any): Promise<{
         gardenId: number;
@@ -42,16 +42,16 @@ export declare class SensorController {
     }>;
     updateSensor(id: number, dto: UpdateSensorDto, req: any): Promise<{
         id: number;
-        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
+        gardenId: number;
     }>;
     deleteSensor(id: number, req: any): Promise<{
         id: number;
-        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
+        gardenId: number;
     }>;
 }

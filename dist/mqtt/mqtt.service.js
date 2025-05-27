@@ -28,6 +28,7 @@ let MqttService = class MqttService {
     }
     handleIncomingData(data) {
         const processedData = this.dataProcessor.processDataFromMqtt(data);
+        this.websocketGateway.sendDataToClients(data);
         return processedData;
     }
 };

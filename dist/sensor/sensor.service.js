@@ -140,9 +140,10 @@ let SensorService = class SensorService {
         if (user.role !== 'admin' && garden.userId !== user.id) {
             throw new common_1.ForbiddenException('You are not authorized to get sensor in this garden');
         }
-        return await this.prisma.sensorData.findMany({
+        const sensors = await this.prisma.sensorData.findMany({
             where: { gardenId }
         });
+        return sensors;
     }
     async updateSensor(id, dto, user) {
         const sensor = await this.prisma.sensorData.findUnique({

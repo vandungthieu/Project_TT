@@ -78,13 +78,11 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SensorController.prototype, "getSensorById", null);
 __decorate([
-    (0, common_1.Get)('/garden:id'),
+    (0, common_1.Get)('/garden/:gardenId'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'lấy sensor theo garden id  ' }),
-    (0, swagger_1.ApiQuery)({ name: 'page', type: Number, required: false, description: 'Số trang (mặc định: 1)' }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', type: Number, required: false, description: 'Số bản ghi mỗi trang (mặc định: 10)' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công", type: create_sensor_dto_1.CreateSensorDto }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "lấy thành công" }),
     (0, swagger_1.ApiResponse)({ status: 401, description: "chưa xác thực" }),
     (0, swagger_1.ApiResponse)({ status: 403, description: "Không có quyền truy cập" }),
     (0, swagger_1.ApiResponse)({ status: 404, description: "Không tìm thấy garden" }),
@@ -147,7 +145,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SensorController.prototype, "deleteSensor", null);
 exports.SensorController = SensorController = __decorate([
-    (0, swagger_1.ApiTags)('sensor'),
+    (0, swagger_1.ApiTags)('sensors'),
     (0, common_1.Controller)('sensors'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),

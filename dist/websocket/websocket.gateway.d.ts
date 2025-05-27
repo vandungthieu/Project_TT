@@ -13,4 +13,5 @@ export declare class WebsocketGateway {
         gardenId: number;
         data: any;
     }): Promise<void>;
+    sendDataToClients(data: any): void;
 }

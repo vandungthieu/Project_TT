@@ -27,9 +27,6 @@ let DataProcessorService = DataProcessorService_1 = class DataProcessorService {
     }
     async processDataFromMqtt(data) {
         const { temperature, humidity, gardenId } = data;
-        const stack = new Error().stack;
-        const caller = stack?.split('\n')[2]?.trim() || 'Unknown caller';
-        this.logger.log(`Hàm processDataFromMqtt được gọi bởi: ${caller}`);
         if (!temperature || !humidity || !gardenId) {
             this.logger.warn('Dữ liệu không hợp lệ:', data);
             return { message: 'Invalid data format', received: data };
@@ -58,15 +55,8 @@ let DataProcessorService = DataProcessorService_1 = class DataProcessorService {
             throw new common_1.UnauthorizedException('Access denied to this garden');
         }
         console.log('Processing data from WebSocket:', data);
-        const { temperature, humidity } = data;
-        if (typeof temperature !== 'number' || typeof humidity !== 'number') {
-            console.warn('Invalid data format:', data);
-            throw new Error('Invalid data format');
-        }
         const processedData = {
             gardenId,
-            temperature,
-            humidity,
             timestamp: new Date(),
             user,
         };
@@ -77,7 +67,14 @@ let DataProcessorService = DataProcessorService_1 = class DataProcessorService {
         try {
             const secret = this.configService.get('JWT_SECRET');
             const payload = this.jwtService.verify(token, { secret });
-            return payload;
+            if (!payload.sub && !payload.id) {
+                throw new common_1.UnauthorizedException('Invalid token: Missing user ID');
+            }
+            return {
+                id: payload.sub || payload.id,
+                email: payload.email,
+                role: payload.role,
+            };
         }
         catch (error) {
             console.warn('Token validation failed:', error.message);
@@ -85,12 +82,17 @@ let DataProcessorService = DataProcessorService_1 = class DataProcessorService {
         }
     }
     async checkGardenAccess(userId, gardenId) {
+        if (!userId) {
+            console.warn('Invalid userId:', userId);
+            throw new common_1.UnauthorizedException('Invalid user ID');
+        }
         const garden = await this.prisma.garden.findFirst({
             where: {
                 id: gardenId,
                 userId,
             },
         });
+        console.log('Garden check:', { userId, gardenId, garden });
         return !!garden;
     }
 };

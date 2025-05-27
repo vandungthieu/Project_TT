@@ -43,7 +43,7 @@ export class WebsocketGateway {
     const processedData = await this.dataProcessor.processDataFromWebsocket(payload);
 
     // Gửi dữ liệu lên MQTT
-    await this.mqttClient.emit('websocket/data', processedData);
+    this.mqttClient.emit('websocket/data', processedData);
 
     // Phản hồi cho client WebSocket đã gửi dữ liệu
     client.emit('response', { message: 'Data published to MQTT', data: processedData });
@@ -53,5 +53,13 @@ export class WebsocketGateway {
     client.emit('error', { message: error.message });
     }
   }
+
+  sendDataToClients(data: any): void {
+    console.log('Sending data to WebSocket clients:', data);
+  
+    // Gửi dữ liệu tới tất cả WebSocket clients
+    this.server.emit('sensorData', data);
+  }
+  
 
 }

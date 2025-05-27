@@ -5,7 +5,7 @@ import { CreateSensorDto } from "./dto/create-sensor.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UpdateSensorDto } from "./dto/update-sensor.dto";
 
-@ApiTags('sensor')
+@ApiTags('sensors')
 @Controller('sensors')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -40,13 +40,11 @@ export class SensorController{
     }
 
     //get sensor by garden id
-    @Get('/garden:id')
+    @Get('garden/:gardenId')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({summary:'lấy sensor theo garden id  '})
-    @ApiQuery({ name: 'page', type: Number, required: false, description: 'Số trang (mặc định: 1)' })
-    @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Số bản ghi mỗi trang (mặc định: 10)' })
-    @ApiResponse({status:200, description:"lấy thành công", type: CreateSensorDto})
+    @ApiResponse({status:200, description:"lấy thành công"})
     @ApiResponse({status:401, description: "chưa xác thực"})
     @ApiResponse({status: 403, description: "Không có quyền truy cập"})
     @ApiResponse({status: 404, description: "Không tìm thấy garden"})

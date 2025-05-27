@@ -34,13 +34,17 @@ let WebsocketGateway = class WebsocketGateway {
         try {
             console.log('Received data from client:', payload);
             const processedData = await this.dataProcessor.processDataFromWebsocket(payload);
-            await this.mqttClient.emit('websocket/data', processedData);
+            this.mqttClient.emit('websocket/data', processedData);
             client.emit('response', { message: 'Data published to MQTT', data: processedData });
         }
         catch (error) {
             console.error('Error in handlePublishData:', error.message);
             client.emit('error', { message: error.message });
         }
+    }
+    sendDataToClients(data) {
+        console.log('Sending data to WebSocket clients:', data);
+        this.server.emit('sensorData', data);
     }
 };
 exports.WebsocketGateway = WebsocketGateway;

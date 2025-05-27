@@ -27,7 +27,9 @@ export class MqttService {
 
   handleIncomingData(data: any): any {
     const processedData = this.dataProcessor.processDataFromMqtt(data);
-    //this.websocketGateway.sendDataToClients(processedData);
+    this.websocketGateway.sendDataToClients(data);
     return processedData;
+  
+
   }
 }
