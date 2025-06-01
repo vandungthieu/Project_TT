@@ -2,8 +2,9 @@
 #include <PubSubClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal_I2C.h>
 
-#define DHTPIN 14     // D5 trên NodeMCU
+#define DHTPIN 15     // D5 trên NodeMCU
 #define DHTTYPE DHT22 // DHT11 hoặc DHT22
 
 // Định nghĩa chân cho 3 đèn LED
@@ -15,19 +16,27 @@
 const int gardenId = 10;
 
 // Cấu hình WiFi
-const char *ssid = "Happy502";
-const char *password = "66668888";
+const char *ssid = "Wokwi-GUEST";
+const char *password = "";
+
+// Khởi tạo lcd
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // Cấu hình MQTT
-const char *mqtt_server = "f275e90fe8454aed8c3d90e35c44fc09.s1.eu.hivemq.cloud";
-const int mqtt_port = 8883;
-const char *mqtt_user = "dungthieu123";
-const char *mqtt_password = "Dung.tv215547";
+// const char *mqtt_server = "f275e90fe8454aed8c3d90e35c44fc09.s1.eu.hivemq.cloud";
+// const int mqtt_port = 1883;
+// const char *mqtt_user = "dungthieu123";
+// const char *mqtt_password = "Dung.tv215547";
+
+const char *mqtt_server = "broker.hivemq.com";
+const int mqtt_port = 1883;
+const char *mqtt_user = "";
+const char *mqtt_password = "";
 
 const char *sensor_topic = "sensor/data";     // Topic gửi dữ liệu cảm biến
 const char *control_topic = "websocket/data"; // Topic nhận lệnh điều khiển
 
-WiFiClientSecure espClient;
+WiFiClient espClient;
 PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -170,16 +179,20 @@ void setup()
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
-  digitalWrite(LED1_PIN, LOW); // Tắt LED ban đầu
+  digitalWrite(LED1_PIN, LOW);
   digitalWrite(LED2_PIN, LOW);
   digitalWrite(LED3_PIN, LOW);
 
   setup_wifi();
 
   // Kết nối tới MQTT broker
-  espClient.setInsecure(); // Bỏ qua chứng chỉ SSL
+  // espClient.setInsecure(); // Bỏ qua chứng chỉ SSL
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
+
+  lcd.init();      // Khởi tạo LCD
+  lcd.backlight(); // Bật đèn nền
+  lcd.clear();     // Xóa màn hình
 }
 
 void loop()
@@ -220,6 +233,16 @@ void loop()
       Serial.println("Gửi dữ liệu thất bại");
     }
   }
+
+  lcd.setCursor(0, 0); // Dòng 1, cột 1
+  lcd.print("Nhiet do : ");
+  lcd.print(temperature, 1);
+  lcd.print("C ");
+
+  lcd.setCursor(0, 1); // Dòng 2, cột 1
+  lcd.print("Do am: ");
+  lcd.print(humidity, 1);
+  lcd.print("%   ");
 
   delay(10000); // Gửi dữ liệu mỗi 10 giây
 }
