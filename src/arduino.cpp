@@ -1,11 +1,10 @@
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
-#include <LiquidCrystal_I2C.h>
 
-#define DHTPIN 15     // D5 trên NodeMCU
-#define DHTTYPE DHT22 // DHT11 hoặc DHT22
+#define DHTPIN 14     // D5 trên NodeMCU
+#define DHTTYPE DHT11 // DHT11 hoặc DHT22
 
 // Định nghĩa chân cho 3 đèn LED
 #define LED1_PIN 5 // D1
@@ -16,27 +15,19 @@
 const int gardenId = 10;
 
 // Cấu hình WiFi
-const char *ssid = "Wokwi-GUEST";
-const char *password = "";
-
-// Khởi tạo lcd
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+const char *ssid = "Happy502";
+const char *password = "66668888";
 
 // Cấu hình MQTT
-// const char *mqtt_server = "f275e90fe8454aed8c3d90e35c44fc09.s1.eu.hivemq.cloud";
-// const int mqtt_port = 1883;
-// const char *mqtt_user = "dungthieu123";
-// const char *mqtt_password = "Dung.tv215547";
-
-const char *mqtt_server = "broker.hivemq.com";
-const int mqtt_port = 1883;
-const char *mqtt_user = "";
-const char *mqtt_password = "";
+const char *mqtt_server = "f275e90fe8454aed8c3d90e35c44fc09.s1.eu.hivemq.cloud";
+const int mqtt_port = 8883;
+const char *mqtt_user = "dungthieu123";
+const char *mqtt_password = "Dung.tv215547";
 
 const char *sensor_topic = "sensor/data";     // Topic gửi dữ liệu cảm biến
 const char *control_topic = "websocket/data"; // Topic nhận lệnh điều khiển
 
-WiFiClient espClient;
+WiFiClientSecure espClient;
 PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -179,20 +170,17 @@ void setup()
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
-  digitalWrite(LED1_PIN, LOW);
+  digitalWrite(LED1_PIN, LOW); // Tắt LED ban đầu
   digitalWrite(LED2_PIN, LOW);
   digitalWrite(LED3_PIN, LOW);
 
   setup_wifi();
+  Serial.println(D5); // Nếu D5 được định nghĩa, sẽ in ra giá trị GPIO tương ứng
 
   // Kết nối tới MQTT broker
-  // espClient.setInsecure(); // Bỏ qua chứng chỉ SSL
+  espClient.setInsecure(); // Bỏ qua chứng chỉ SSL
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
-
-  lcd.init();      // Khởi tạo LCD
-  lcd.backlight(); // Bật đèn nền
-  lcd.clear();     // Xóa màn hình
 }
 
 void loop()
@@ -204,45 +192,29 @@ void loop()
   client.loop();
 
   // Đọc dữ liệu từ DHT11/DHT22
-  float humidity = dht.readHumidity();
-  float temperature = dht.readTemperature();
+  // Tạo dữ liệu giả định (ngẫu nhiên hoặc cố định)
+  float temperature = random(250, 350) / 10.0; // 25.0 đến 35.0 độ C
+  float humidity = random(400, 700) / 10.0;    // 40.0% đến 70.0%
 
-  if (isnan(humidity) || isnan(temperature))
+  // Tạo dữ liệu JSON
+  String payload = "{";
+  payload += "\"gardenId\":" + String(gardenId) + ",";
+  payload += "\"temperature\":" + String(temperature, 2) + ",";
+  payload += "\"humidity\":" + String(humidity, 2);
+  payload += "}";
+
+  Serial.print("Đang gửi dữ liệu MOCK: ");
+  Serial.println(payload);
+
+  // Gửi dữ liệu lên MQTT
+  if (client.publish(sensor_topic, payload.c_str()))
   {
-    Serial.println("Lỗi đọc dữ liệu từ DHT sensor!");
+    Serial.println("Dữ liệu đã gửi thành công");
   }
   else
   {
-    // Tạo dữ liệu JSON
-    String payload = "{";
-    payload += "\"gardenId\":" + String(gardenId) + ",";
-    payload += "\"temperature\":" + String(temperature, 2) + ",";
-    payload += "\"humidity\":" + String(humidity, 2);
-    payload += "}";
-
-    Serial.print("Đang gửi dữ liệu: ");
-    Serial.println(payload);
-
-    // Gửi dữ liệu lên MQTT
-    if (client.publish(sensor_topic, payload.c_str()))
-    {
-      Serial.println("Dữ liệu đã gửi thành công");
-    }
-    else
-    {
-      Serial.println("Gửi dữ liệu thất bại");
-    }
+    Serial.println("Gửi dữ liệu thất bại");
   }
-
-  lcd.setCursor(0, 0); // Dòng 1, cột 1
-  lcd.print("Nhiet do : ");
-  lcd.print(temperature, 1);
-  lcd.print("C ");
-
-  lcd.setCursor(0, 1); // Dòng 2, cột 1
-  lcd.print("Do am: ");
-  lcd.print(humidity, 1);
-  lcd.print("%   ");
 
   delay(10000); // Gửi dữ liệu mỗi 10 giây
 }
