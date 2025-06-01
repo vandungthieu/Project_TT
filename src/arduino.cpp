@@ -74,7 +74,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   if (String(topic) == control_topic)
   {
     // Lấy trường "data" (JSON lồng nhau)
-    const char *data_str = doc["data"];
+    const char *data_str = doc["data"]["data"];
     if (!data_str)
     {
       Serial.println("Không tìm thấy trường 'data' trong payload");

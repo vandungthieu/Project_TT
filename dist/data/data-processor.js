@@ -50,15 +50,13 @@ let DataProcessorService = DataProcessorService_1 = class DataProcessorService {
     async processDataFromWebsocket(payload) {
         const { token, gardenId, data } = payload;
         const user = await this.validateToken(token);
-        const hasAccess = await this.checkGardenAccess(user.id, gardenId);
+        const hasAccess = await this.checkGardenAccess(user.id, user.role, gardenId);
         if (!hasAccess) {
             throw new common_1.UnauthorizedException('Access denied to this garden');
         }
         console.log('Processing data from WebSocket:', data);
         const processedData = {
-            gardenId,
-            timestamp: new Date(),
-            user,
+            data
         };
         console.log('Processed data:', processedData);
         return processedData;
@@ -81,7 +79,10 @@ let DataProcessorService = DataProcessorService_1 = class DataProcessorService {
             throw new common_1.UnauthorizedException('Invalid token');
         }
     }
-    async checkGardenAccess(userId, gardenId) {
+    async checkGardenAccess(userId, role, gardenId) {
+        if (role === 'admin') {
+            return true;
+        }
         if (!userId) {
             console.warn('Invalid userId:', userId);
             throw new common_1.UnauthorizedException('Invalid user ID');

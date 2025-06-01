@@ -23,10 +23,10 @@ export declare class DataProcessorService {
         message: string;
         savedData: {
             id: number;
-            gardenId: number;
             temperature: number;
             humidity: number;
             timestamp: Date;
+            gardenId: number;
         };
         received?: undefined;
     }>;
@@ -35,18 +35,12 @@ export declare class DataProcessorService {
         gardenId: number;
         data: any;
     }): Promise<{
-        gardenId: number;
-        timestamp: Date;
-        user: {
-            id: number;
-            email: string;
-            role: string;
-        };
+        data: any;
     }>;
     validateToken(token: string): Promise<{
         id: number;
         email: string;
         role: string;
     }>;
-    checkGardenAccess(userId: number, gardenId: number): Promise<boolean>;
+    checkGardenAccess(userId: number, role: string, gardenId: number): Promise<boolean>;
 }

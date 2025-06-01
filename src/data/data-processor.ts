@@ -49,7 +49,7 @@ export class DataProcessorService {
   const user = await this.validateToken(token);
 
   // Kiểm tra quyền truy cập vào gardenId
-  const hasAccess = await this.checkGardenAccess(user.id, gardenId);
+  const hasAccess = await this.checkGardenAccess(user.id, user.role, gardenId);
   if (!hasAccess) {
     throw new UnauthorizedException('Access denied to this garden');
   }
@@ -57,9 +57,7 @@ export class DataProcessorService {
   console.log('Processing data from WebSocket:', data);
 
   const processedData = {
-    gardenId,
-    timestamp: new Date(),
-    user,
+    data
   };
 
   console.log('Processed data:', processedData);
@@ -90,7 +88,12 @@ export class DataProcessorService {
   }
 
   // kiểm tra quyền 
-  async checkGardenAccess(userId: number, gardenId: number): Promise<boolean> {
+  async checkGardenAccess(userId: number, role : string, gardenId: number): Promise<boolean> {
+
+    // Nếu là admin thì cho phép truy cập tất cả garden
+    if (role === 'admin') {
+        return true;
+    }
     // Kiểm tra userId hợp lệ
     if (!userId) {
       console.warn('Invalid userId:', userId);
