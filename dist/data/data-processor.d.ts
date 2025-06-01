@@ -23,10 +23,10 @@ export declare class DataProcessorService {
         message: string;
         savedData: {
             id: number;
+            gardenId: number;
             temperature: number;
             humidity: number;
             timestamp: Date;
-            gardenId: number;
         };
         received?: undefined;
     }>;

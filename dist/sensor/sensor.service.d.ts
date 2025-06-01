@@ -6,31 +6,31 @@ export declare class SensorService {
     constructor(prisma: PrismaService);
     createSensor(dto: CreateSensorDto, user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }>;
     getSensorById(id: number, user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }>;
     getSensor(user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }[]>;
     getSensorDataByTime(from: string, to: string, gardenId: number, user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }[]>;
     getAverageSensorData24h(gardenId: number, user: any): Promise<{
         gardenId: number;
@@ -42,23 +42,23 @@ export declare class SensorService {
     }>;
     getSensorByGarden(gardenId: number, user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }[]>;
     updateSensor(id: number, dto: UpdateSensorDto, user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }>;
     deleteSensor(id: number, user: any): Promise<{
         id: number;
+        gardenId: number;
         temperature: number;
         humidity: number;
         timestamp: Date;
-        gardenId: number;
     }>;
 }

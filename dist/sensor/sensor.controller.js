@@ -78,7 +78,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], SensorController.prototype, "getSensorById", null);
 __decorate([
-    (0, common_1.Get)('/garden/:gardenId'),
+    (0, common_1.Get)('garden/:gardenId'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'lấy sensor theo garden id  ' }),

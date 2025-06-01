@@ -3,54 +3,58 @@
 #include <DHT.h>
 #include <ArduinoJson.h>
 
-#define DHTPIN 14        // D5 trên NodeMCU
-#define DHTTYPE DHT22    // DHT11 hoặc DHT22
+#define DHTPIN 14     // D5 trên NodeMCU
+#define DHTTYPE DHT22 // DHT11 hoặc DHT22
 
 // Định nghĩa chân cho 3 đèn LED
-#define LED1_PIN 5  // D1
-#define LED2_PIN 4  // D2
-#define LED3_PIN 0  // D3
+#define LED1_PIN 5 // D1
+#define LED2_PIN 4 // D2
+#define LED3_PIN 0 // D3
 
 // gardenId
 const int gardenId = 10;
 
 // Cấu hình WiFi
-const char* ssid = "Happy502";
-const char* password = "66668888";
+const char *ssid = "Happy502";
+const char *password = "66668888";
 
 // Cấu hình MQTT
-const char* mqtt_server = "f275e90fe8454aed8c3d90e35c44fc09.s1.eu.hivemq.cloud";
+const char *mqtt_server = "f275e90fe8454aed8c3d90e35c44fc09.s1.eu.hivemq.cloud";
 const int mqtt_port = 8883;
-const char* mqtt_user = "dungthieu123";
-const char* mqtt_password = "Dung.tv215547";
+const char *mqtt_user = "dungthieu123";
+const char *mqtt_password = "Dung.tv215547";
 
-const char* sensor_topic = "sensor/data";     // Topic gửi dữ liệu cảm biến
-const char* control_topic = "websocket/data"; // Topic nhận lệnh điều khiển
+const char *sensor_topic = "sensor/data";     // Topic gửi dữ liệu cảm biến
+const char *control_topic = "websocket/data"; // Topic nhận lệnh điều khiển
 
 WiFiClientSecure espClient;
 PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE);
 
-void setup_wifi() {
+void setup_wifi()
+{
   delay(10);
   Serial.println();
   Serial.print("Đang kết nối WiFi...");
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
   Serial.println(" Đã kết nối WiFi");
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char *topic, byte *payload, unsigned int length)
+{
   Serial.print("Nhận dữ liệu từ topic: ");
   Serial.println(topic);
 
   // Chuyển payload thành chuỗi
   String message;
-  for (unsigned int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++)
+  {
     message += (char)payload[i];
   }
   Serial.print("Payload: ");
@@ -59,17 +63,20 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // Parse JSON
   DynamicJsonDocument doc(1024);
   DeserializationError error = deserializeJson(doc, message);
-  if (error) {
+  if (error)
+  {
     Serial.print("Lỗi parse JSON: ");
     Serial.println(error.c_str());
     return;
   }
 
   // Kiểm tra topic
-  if (String(topic) == control_topic) {
+  if (String(topic) == control_topic)
+  {
     // Lấy trường "data" (JSON lồng nhau)
-    const char* data_str = doc["data"];
-    if (!data_str) {
+    const char *data_str = doc["data"];
+    if (!data_str)
+    {
       Serial.println("Không tìm thấy trường 'data' trong payload");
       return;
     }
@@ -77,58 +84,75 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // Parse JSON lồng nhau
     DynamicJsonDocument data_doc(512);
     error = deserializeJson(data_doc, data_str);
-    if (error) {
+    if (error)
+    {
       Serial.print("Lỗi parse JSON lồng nhau: ");
       Serial.println(error.c_str());
       return;
     }
 
     // Lấy trạng thái đèn
-    const char* led1State = data_doc["led1State"];
-    if (led1State) {
-      if (String(led1State) == "On") {
+    const char *led1State = data_doc["led1State"];
+    if (led1State)
+    {
+      if (String(led1State) == "On")
+      {
         digitalWrite(LED1_PIN, HIGH);
         Serial.println("LED1: Bật");
-      } else if (String(led1State) == "Off") {
+      }
+      else if (String(led1State) == "Off")
+      {
         digitalWrite(LED1_PIN, LOW);
         Serial.println("LED1: Tắt");
       }
     }
 
-    const char* led2State = data_doc["led2State"];
-    if (led2State) {
-      if (String(led2State) == "On") {
+    const char *led2State = data_doc["led2State"];
+    if (led2State)
+    {
+      if (String(led2State) == "On")
+      {
         digitalWrite(LED2_PIN, HIGH);
         Serial.println("LED2: Bật");
-      } else if (String(led2State) == "Off") {
+      }
+      else if (String(led2State) == "Off")
+      {
         digitalWrite(LED2_PIN, LOW);
         Serial.println("LED2: Tắt");
       }
     }
 
-    const char* led3State = data_doc["led3State"];
-    if (led3State) {
-      if (String(led3State) == "On") {
+    const char *led3State = data_doc["led3State"];
+    if (led3State)
+    {
+      if (String(led3State) == "On")
+      {
         digitalWrite(LED3_PIN, HIGH);
         Serial.println("LED3: Bật");
-      } else if (String(led3State) == "Off") {
+      }
+      else if (String(led3State) == "Off")
+      {
         digitalWrite(LED3_PIN, LOW);
         Serial.println("LED3: Tắt");
       }
     }
-
   }
 }
 
-void reconnect() {
-  while (!client.connected()) {
+void reconnect()
+{
+  while (!client.connected())
+  {
     Serial.print("Đang kết nối MQTT...");
     String clientId = "ESP8266Client-" + String(random(0xffff), HEX);
-    if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
+    if (client.connect(clientId.c_str(), mqtt_user, mqtt_password))
+    {
       Serial.println(" Kết nối thành công MQTT");
       // Subscribe vào topic điều khiển
       client.subscribe(control_topic);
-    } else {
+    }
+    else
+    {
       Serial.print(" Lỗi, rc=");
       Serial.print(client.state());
       Serial.println(" Thử lại sau 5 giây");
@@ -137,7 +161,8 @@ void reconnect() {
   }
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   dht.begin();
 
@@ -157,8 +182,10 @@ void setup() {
   client.setCallback(callback);
 }
 
-void loop() {
-  if (!client.connected()) {
+void loop()
+{
+  if (!client.connected())
+  {
     reconnect();
   }
   client.loop();
@@ -167,9 +194,12 @@ void loop() {
   float humidity = dht.readHumidity();
   float temperature = dht.readTemperature();
 
-  if (isnan(humidity) || isnan(temperature)) {
+  if (isnan(humidity) || isnan(temperature))
+  {
     Serial.println("Lỗi đọc dữ liệu từ DHT sensor!");
-  } else {
+  }
+  else
+  {
     // Tạo dữ liệu JSON
     String payload = "{";
     payload += "\"gardenId\":" + String(gardenId) + ",";
@@ -181,9 +211,12 @@ void loop() {
     Serial.println(payload);
 
     // Gửi dữ liệu lên MQTT
-    if (client.publish(sensor_topic, payload.c_str())) {
+    if (client.publish(sensor_topic, payload.c_str()))
+    {
       Serial.println("Dữ liệu đã gửi thành công");
-    } else {
+    }
+    else
+    {
       Serial.println("Gửi dữ liệu thất bại");
     }
   }

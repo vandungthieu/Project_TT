@@ -17,8 +17,8 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const auth_service_1 = require("./auth.service");
 const register_dto_1 = require("./dto/register.dto");
-const login_dto_1 = require("./dto/login.dto");
 const local_auth_guard_1 = require("./guards/local-auth.guard");
+const login_dto_1 = require("./dto/login.dto");
 class LoginResponseDto {
     access_token;
 }
@@ -40,7 +40,7 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'đăng ký người dùng mới' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Đăng ký người dùng mới' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Người dùng đã được tạo thành công', type: login_dto_1.LoginDto }),
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Dữ liệu đầu vào không hợp lệ' }),
     (0, swagger_1.ApiResponse)({ status: 409, description: 'Email đã tồn tại' }),
@@ -53,8 +53,9 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(local_auth_guard_1.LocalAuthGuard),
     (0, swagger_1.ApiOperation)({ summary: 'Đăng nhập người dùng và trả về token' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: "đăng nhập thành công", type: LoginResponseDto }),
-    (0, swagger_1.ApiResponse)({ status: 401, description: "Thông tin đăng nhập không hợp lệ" }),
+    (0, swagger_1.ApiBody)({ type: login_dto_1.LoginDto }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Đăng nhập thành công', type: LoginResponseDto }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: 'Thông tin đăng nhập không hợp lệ' }),
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
